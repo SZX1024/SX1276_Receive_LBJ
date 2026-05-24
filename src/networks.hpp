@@ -9,7 +9,7 @@
 #include <ctime>
 #include "esp_sntp.h"
 #include <Preferences.h>
-// #include <PubSubClient.h>
+#include <PubSubClient.h>
 #include "ESPTelnet.h"
 #include <RadioLib.h>
 #include "unicon.hpp"

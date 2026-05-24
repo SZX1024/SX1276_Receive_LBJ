@@ -160,11 +160,11 @@ void showInitComp() {
     // bottom (0,56,128,8)
     String ipa = WiFi.localIP().toString();
     u8g2->drawStr(0, 64, ipa.c_str());
-    if (have_sd && WiFiClass::status() == WL_CONNECTED)
+    if (have_sd && WiFi.status() == WL_CONNECTED)
         u8g2->drawStr(89, 64, "D");
     else if (have_sd)
         u8g2->drawStr(89, 64, "L");
-    else if (WiFiClass::status() == WL_CONNECTED)
+    else if (WiFi.status() == WL_CONNECTED)
         u8g2->drawStr(89, 64, "N");
     char buffer[32];
     sprintf(buffer, "%2u", ets_get_cpu_frequency() / 10);
@@ -211,11 +211,11 @@ void updateInfo() {
         u8g2->drawStr(0, 64, "WIFI OFF");
     sprintf(buffer, "%.1f", getBias(actual_frequency));
     u8g2->drawStr(73, 64, buffer);
-    if (sd1.status() && WiFiClass::status() == WL_CONNECTED)
+    if (sd1.status() && WiFi.status() == WL_CONNECTED)
         u8g2->drawStr(89, 64, "D");
     else if (sd1.status())
         u8g2->drawStr(89, 64, "L");
-    else if (WiFiClass::status() == WL_CONNECTED)
+    else if (WiFi.status() == WL_CONNECTED)
         u8g2->drawStr(89, 64, "N");
     sprintf(buffer, "%2u", ets_get_cpu_frequency() / 10);
     u8g2->drawStr(96, 64, buffer);
@@ -566,7 +566,7 @@ void setup() {
 
     // Configure time sync.
     sntp_set_time_sync_notification_cb(timeAvailable);
-    sntp_servermode_dhcp(1);
+    esp_sntp_servermode_dhcp(1);
     configTzTime(time_zone, ntpServer1, ntpServer2);
 
 #ifdef HAS_RTC
@@ -697,7 +697,10 @@ void setup() {
 //        Serial.println("WIFI Sleep enabled.");
 
     // start thread watchdog
-    esp_task_wdt_init(WDT_TIMEOUT, true);
+    esp_task_wdt_config_t wdt_config = {
+        .timeout_ms = WDT_TIMEOUT * 1000,
+    };
+    esp_task_wdt_init(&wdt_config);
     esp_task_wdt_add(nullptr);
     // wdt_timer = millis64();
 
@@ -802,7 +805,7 @@ void checkNetwork() {
         telnet.stop();
         telnet_online = false;
         WiFi.disconnect();
-        WiFiClass::mode(WIFI_OFF);
+        WiFi.mode(WIFI_OFF);
         Serial.println("WIFI off after 30 minutes without connection.");
         no_wifi = true;
     }
@@ -889,9 +892,9 @@ void loop() {
         if (isConnected())
             setCpuFrequencyMhz(80);
         else {
-            WiFiClass::mode(WIFI_OFF);
+            WiFi.mode(WIFI_OFF);
             setCpuFrequencyMhz(80);
-            WiFiClass::mode(WIFI_MODE_STA);
+            WiFi.mode(WIFI_MODE_STA);
 #ifdef USE_SMARTCONFIG
             // connectWiFi();
             WiFi.begin(wifiSSID, wifiPassword);

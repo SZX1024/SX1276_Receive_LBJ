@@ -605,7 +605,7 @@ int SD_LOG::readIndex(const File& cwd) {
         while (index.available()) {
             String str = index.readStringUntil('\n');
             if (str.substring(0, 13) == "FILE COUNTER:") {
-                counter = std::stoi(str.substring(14).c_str());
+                counter = str.substring(14).toInt();
                 break;
             }
         }

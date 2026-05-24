@@ -3,6 +3,7 @@
 //
 
 #include "networks.hpp"
+#include <string>
 
 /* ------------------------------------------------ */
 Preferences preferences;
@@ -17,7 +18,7 @@ const char *ntpServer2 = "time.nist.gov";
 struct tm time_info{};
 
 bool isConnected() {
-    return (WiFiClass::status() == WL_CONNECTED);
+    return (WiFi.status() == WL_CONNECTED);
 }
 
 void performSmartConfig() {
@@ -57,7 +58,7 @@ bool connectToWiFi(const String &ssid, const String &password, int timeout) {
 }
 
 bool connectWiFi() {
-    WiFiClass::mode(WIFI_STA);
+    WiFi.mode(WIFI_STA);
     if (!wifiPassword.isEmpty() && !wifiSSID.isEmpty()) {
         WiFi.begin(wifiSSID, wifiPassword);
         Serial.println("[Network]Connecting to WiFi...");
@@ -86,7 +87,7 @@ bool connectWiFi() {
 }
 
 void silentConnect(const char *ssid, const char *password) {
-    WiFiClass::mode(WIFI_STA);
+    WiFi.mode(WIFI_STA);
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
     preferences.begin("wifi-config", false);
@@ -112,7 +113,7 @@ void changeCpuFreq(uint32_t freq_mhz) {
             setCpuFrequencyMhz(freq_mhz);
             if (no_wifi) {
                 // auto timer = millis64();
-                WiFiClass::mode(WIFI_OFF);
+                WiFi.mode(WIFI_OFF);
                 WiFi.setSleep(true);
                 // Serial.printf("[D] Switch to 80MHz, WIFI OFF [%llu] \n", millis64() - timer);
             }
@@ -120,7 +121,7 @@ void changeCpuFreq(uint32_t freq_mhz) {
     } else {
         // Serial.println("[D] CALL WIFI OFF");
         auto timer = millis64();
-        WiFiClass::mode(WIFI_OFF);
+        WiFi.mode(WIFI_OFF);
         Serial.printf("[D] WIFI OFF [%llu] \n", millis64() - timer);
         if (ets_get_cpu_frequency() != freq_mhz)
             setCpuFrequencyMhz(freq_mhz);
@@ -132,7 +133,7 @@ void changeCpuFreq(uint32_t freq_mhz) {
         WiFi.begin(wifiSSID, wifiPassword);
 #endif
         // Serial.println("[D] WIFI BEGIN");
-        WiFiClass::mode(WIFI_MODE_STA);
+        WiFi.mode(WIFI_MODE_STA);
         // Serial.println("[D] WIFI STA");
 //        WiFi.setAutoReconnect(true);
 //        WiFi.persistent(true);
