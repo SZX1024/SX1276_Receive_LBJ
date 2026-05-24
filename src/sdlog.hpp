@@ -9,13 +9,9 @@
 #include <FS.h>
 #include <Arduino.h>
 #include <ctime>
-#include "utilities.h"
+#include "config.h"
 #include "ESPTelnet.h"
 #include "boards.hpp"
-
-#define MAX_LOG_SIZE 500000 // 500000 default
-#define MAX_CSV_SIZE 500000
-#define LOG_VERBOSITY 0
 
 class SD_LOG {
 public:
@@ -109,5 +105,7 @@ private:
     struct tm timein{};
 };
 
+
+extern SD_LOG sd1;
 
 #endif //PAGER_RECEIVE_SDLOG_HPP

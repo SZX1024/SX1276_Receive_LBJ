@@ -310,7 +310,7 @@ void SD_LOG::appendBuffer(const char *format, ...) {
     vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
     if (is_startline) {
-        char *time_buffer = new char[128];
+        char time_buffer[128];
         if (getLocalTime(&timein, 1)) {
             sprintf(time_buffer, "%d-%02d-%02d %02d:%02d:%02d > ", timein.tm_year + 1900, timein.tm_mon + 1,
                     timein.tm_mday, timein.tm_hour, timein.tm_min, timein.tm_sec);
@@ -319,10 +319,9 @@ void SD_LOG::appendBuffer(const char *format, ...) {
             sprintf(time_buffer, "[%6llu.%03llu] > ", millis64() / 1000, millis64() % 1000);
             large_buffer += time_buffer;
         }
-        delete[] time_buffer;
         is_startline = false;
     }
-    if (nullptr != strchr(format, '\n')) /* detect end of line in stream */
+    if (nullptr != strchr(format, '\n'))
         is_startline = true;
     large_buffer += buffer;
 }
@@ -352,10 +351,6 @@ void SD_LOG::sendBufferLOG() {
         log.close();
         begin(log_directory);
     }
-    if (log.size() >= MAX_LOG_SIZE && !size_checked) {
-        log.close();
-        begin(log_directory);
-    }
     log.print(large_buffer);
     log.flush();
     large_buffer = "";
@@ -370,7 +365,7 @@ void SD_LOG::appendBufferCSV(const char *format, ...) {
     vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
     if (is_startline_csv) {
-        char *headers = new char[128];
+        char headers[128];
 #ifdef HAS_RTC
         sprintf(headers, "%.2f,", rtc.getTemperature());
         large_buffer_csv += headers;
@@ -388,7 +383,6 @@ void SD_LOG::appendBufferCSV(const char *format, ...) {
             sprintf(headers, "null,null,");
             large_buffer_csv += headers;
         }
-        delete[] headers;
         is_startline_csv = false;
     }
     if (nullptr != strchr(format, '\n')) /* detect end of line in stream */
@@ -625,3 +619,5 @@ void SD_LOG::updateIndex(const String &path, int counter) {
     index.printf("FILE COUNTER: %d\n",counter);
     index.close();
 }
+
+SD_LOG sd1;

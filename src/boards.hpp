@@ -4,9 +4,8 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-#include "utilities.h"
+#include "config.h"
 #include <ESP32AnalogRead.h>
-#include "patterns.h"
 
 #ifdef HAS_SDCARD
 
@@ -48,14 +47,6 @@ XPowersLibInterface *PMU = NULL;
 #define PMU_WIRE_PORT   Wire
 #endif
 
-
-
-bool pmuInterrupt;
-
-void setPmuFlag()
-{
-    pmuInterrupt = true;
-}
 
 
 bool initPMU()
@@ -308,12 +299,8 @@ bool initPMU()
     return true;
 }
 
-void disablePeripherals()
-{
-}
 #else
 #define initPMU()
-#define disablePeripherals()
 #endif
 
 extern ESP32AnalogRead battery;
